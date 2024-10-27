@@ -1,0 +1,38 @@
+{
+  "name": "log-decorater-web",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "export": "next export",
+    "deploy": "next build && touch out/.nojekyll && git add -f out/ && git commit -m \"Deploy\" && git subtree push --prefix out origin gh-pages"
+  },
+  "dependencies": {
+    "@ant-design/icons": "^5.5.1",
+    "@monaco-editor/react": "^4.6.0",
+    "@types/dompurify": "^3.0.5",
+    "@types/js-cookie": "^3.0.6",
+    "@types/react-color": "^3.0.12",
+    "antd": "^5.21.5",
+    "dompurify": "^3.1.7",
+    "js-cookie": "^3.0.5",
+    "lz-string": "^1.5.0",
+    "next": "15.0.1",
+    "react": "19.0.0-rc-69d4b800-20241021",
+    "react-color": "^2.19.3",
+    "react-dom": "19.0.0-rc-69d4b800-20241021"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "eslint": "^8",
+    "eslint-config-next": "15.0.1",
+    "postcss": "^8",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5"
+  }
+}
