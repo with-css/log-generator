@@ -9,8 +9,14 @@ export const createBookmarklet = (
   sanitization.character.box.customHTML = DOMPurify.sanitize(
     custom.character.box.customHTML
   );
+  sanitization.character.box.customPTag = DOMPurify.sanitize(
+    custom.character.box.customHTML
+  );
   sanitization.persona.box.customHTML = DOMPurify.sanitize(
     custom.persona.box.customHTML
+  );
+  sanitization.persona.box.customPTag = DOMPurify.sanitize(
+    custom.character.box.customHTML
   );
   // Convert the styling logic to a bookmarklet-compatible string
   const bookmarkletCode = `javascript: (() => {
