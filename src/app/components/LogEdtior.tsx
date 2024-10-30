@@ -1,5 +1,5 @@
 // components/LogEditor.tsx
-import React, { ChangeEvent, useMemo } from "react";
+import React, { useMemo } from "react";
 import {
   Row,
   Col,
@@ -19,6 +19,7 @@ import Customizer from "./Customizer";
 import QuickSettings from "./QuickSettings";
 import { createBookmarklet } from "../utils/bookmarkelter";
 import { compressData } from "../utils/storage";
+import ImageUploadTextArea from "./ImageUploadTextArea";
 
 const { TextArea } = Input;
 const { Title } = Typography;
@@ -30,7 +31,7 @@ interface LogEditorProps {
   logCustom: LogCustom;
   overwriteStyle?: () => void;
   handleLogCustomChange: (newCustom: LogCustom) => void;
-  onInputChange: (e: ChangeEvent<HTMLTextAreaElement>) => void;
+  onInputChange: (text: string) => void;
   onConfigChange: (key: keyof Config, value: string | boolean) => void;
   onConvertText: () => void;
   onCopyToClipboard: (text: string) => void;
@@ -185,11 +186,11 @@ const LogEditor: React.FC<LogEditorProps> = ({
       <Row gutter={[16, 16]}>
         <Col xs={24} md={12}>
           <Title level={4}>텍스트 입력</Title>
-          <TextArea
+          <ImageUploadTextArea
             value={inputText}
             onChange={onInputChange}
             placeholder="여기에 텍스트를 입력하세요..."
-            style={{ height: "400px", marginBottom: "16px" }}
+            rows={6}
           />
         </Col>
 

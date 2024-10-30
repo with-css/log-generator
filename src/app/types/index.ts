@@ -24,6 +24,11 @@ export type TextStyleType =
   | "singleQuote"
   | "doubleQuote";
 
+export enum IMAGE_UPLOAD_HOST {
+  IBB = "ibb",
+  ARCA = "arca",
+}
+
 export interface TextStyle {
   color: string;
   customCSS: string;
@@ -52,6 +57,8 @@ export interface Config {
   personaName: string;
   selectedMode: "bot" | "persona";
   changeMode: boolean;
+  imageUpload: boolean;
+  imageUploadHost: IMAGE_UPLOAD_HOST;
 }
 
 export interface StorageState {

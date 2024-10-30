@@ -1,5 +1,5 @@
 import React from "react";
-import { Form, Input, Checkbox, Radio, Col, Row } from "antd";
+import { Form, Input, Checkbox, Radio, Col, Row, Select } from "antd";
 import { Config } from "../types";
 
 interface ConfigurationProps {
@@ -41,6 +41,22 @@ const Configuration: React.FC<ConfigurationProps> = ({
             >
               변환 결과 렌더링
             </Checkbox>
+            <div>
+              <Checkbox
+                checked={preview}
+                onChange={(e) => onConfigChange("preview", e.target.checked)}
+              >
+                이미지 자동 업로드
+              </Checkbox>
+              <Select
+                defaultValue="ibb"
+                style={{ width: 120 }}
+                options={[
+                  { value: "ibb", label: "ImgBB" },
+                  { value: "arca", label: "Arcalive" },
+                ]}
+              />
+            </div>
           </Form.Item>
         </Col>
 

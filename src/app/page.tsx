@@ -1,10 +1,12 @@
 "use client";
 
-import React, { useState, ChangeEvent, useEffect, Suspense } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { Layout, Typography, message, TabsProps, Tabs } from "antd";
-import { Config, Custom, LogCustom } from "./types";
+import { Config, LogCustom } from "./types";
 import { convertToHTML } from "./utils/textConverter";
 import {
+  createConfigValue,
+  createDefaultValue,
   decompressData,
   loadStateFromStorage,
   updateStateInStorage,
@@ -14,58 +16,6 @@ import LogEditor from "./components/LogEdtior";
 
 const { Title } = Typography;
 const { Content } = Layout;
-
-const createDefaultValue = (): Custom => ({
-  box: {
-    backgroundColor: "#ffffff",
-    borderRadius: 4,
-    shadow: {
-      x: 0,
-      y: 0,
-      blur: 8,
-      spread: 0,
-      color: "#ababab",
-    },
-    customHTML: "",
-    isCustomMode: false,
-    customPTag: '<p style="margin:1.2rem 0;">{{line}}</p>',
-    customImages: [],
-    customColors: [],
-    customTexts: [],
-  },
-  text: {
-    normal: {
-      color: "#000000",
-      customCSS: "color: #000000;",
-      useCustomCSS: false,
-    },
-    doubleQuote: {
-      color: "#8BE9FD",
-      customCSS: "color: #8BE9FD;",
-      useCustomCSS: false,
-    },
-    singleQuote: {
-      color: "#50FA7B",
-      customCSS: "color: #50FA7B;",
-      useCustomCSS: false,
-    },
-    italic: {
-      color: "#A0A0A0",
-      customCSS: "color: #A0A0A0;",
-      useCustomCSS: false,
-    },
-    bold: {
-      color: "#FFB86C",
-      customCSS: "color: #dbccbd;",
-      useCustomCSS: false,
-    },
-    italicBold: {
-      color: "#FF79C6",
-      customCSS: "color: #FF79C6;",
-      useCustomCSS: false,
-    },
-  },
-});
 
 const Main = () => {
   const loadURL = useSearchParams().get("style");
@@ -110,14 +60,7 @@ const Main = () => {
   });
 
   // Configuration 관련 state 추가
-  const [config, setConfig] = useState<Config>({
-    removeAsterisk: true,
-    preview: false,
-    botName: "",
-    personaName: "",
-    selectedMode: "bot",
-    changeMode: false,
-  });
+  const [config, setConfig] = useState<Config>(createConfigValue());
 
   // logCustom 상태 변경 핸들러
   const handleLogCustomChange = (newLogCustom: LogCustom) => {
@@ -179,9 +122,7 @@ const Main = () => {
             config={config}
             logCustom={logCustom}
             handleLogCustomChange={handleLogCustomChange}
-            onInputChange={(e: ChangeEvent<HTMLTextAreaElement>) =>
-              setInputText(e.target.value)
-            }
+            onInputChange={(text) => setInputText(text)}
             onConfigChange={handleConfigChange}
             onConvertText={convertText}
             onCopyToClipboard={copyToClipboard}
@@ -203,9 +144,7 @@ const Main = () => {
             handleLogCustomChange={(newLogCustom) =>
               setSharedLogCustom(newLogCustom)
             }
-            onInputChange={(e: ChangeEvent<HTMLTextAreaElement>) =>
-              setInputText(e.target.value)
-            }
+            onInputChange={(text) => setInputText(text)}
             onConfigChange={handleConfigChange}
             onConvertText={convertText}
             onCopyToClipboard={copyToClipboard}
