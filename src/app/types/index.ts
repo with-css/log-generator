@@ -59,6 +59,7 @@ export interface Config {
   changeMode: boolean;
   imageUpload: boolean;
   imageUploadHost: IMAGE_UPLOAD_HOST;
+  beautifyPaste: boolean;
 }
 
 export interface StorageState {

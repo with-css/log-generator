@@ -191,6 +191,7 @@ const LogEditor: React.FC<LogEditorProps> = ({
             onChange={onInputChange}
             placeholder="여기에 텍스트를 입력하세요..."
             rows={6}
+            beautifyPaste={config.beautifyPaste}
           />
         </Col>
 
@@ -216,15 +217,7 @@ const LogEditor: React.FC<LogEditorProps> = ({
       {/* 전처리 옵션 */}
       <Row style={{ marginBottom: "24px" }} justify="center">
         <Col span={24}>
-          <Configuration
-            preview={config.preview}
-            removeAsterisk={config.removeAsterisk}
-            botName={config.botName}
-            personaName={config.personaName}
-            selectedMode={config.selectedMode}
-            changeMode={config.changeMode}
-            onConfigChange={onConfigChange}
-          />
+          <Configuration config={config} onConfigChange={onConfigChange} />
         </Col>
       </Row>
 

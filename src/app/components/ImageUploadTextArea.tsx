@@ -9,6 +9,7 @@ interface ImageUploadTextAreaProps {
   onChange: (value: string) => void;
   placeholder?: string;
   rows?: number;
+  beautifyPaste?: boolean;
 }
 
 type TextAreaRefType = GetRef<typeof TextArea>;
@@ -18,6 +19,7 @@ const ImageUploadTextArea: React.FC<ImageUploadTextAreaProps> = ({
   onChange,
   placeholder = "내용을 입력하세요",
   rows = 4,
+  beautifyPaste = false,
 }) => {
   // 업로드 중인 상태 관리
   const [isUploading, setIsUploading] = useState(false);
@@ -77,7 +79,6 @@ const ImageUploadTextArea: React.FC<ImageUploadTextAreaProps> = ({
               const images: string[] = [];
 
               const dom = domParser.parseFromString(s, mimeType);
-
               dom.querySelectorAll("em").forEach((em) => {
                 em.innerText = `*${em.innerText}*`;
               });
@@ -90,8 +91,12 @@ const ImageUploadTextArea: React.FC<ImageUploadTextAreaProps> = ({
                 li.innerText = "- " + li.innerText;
               });
 
+              dom.querySelectorAll("p").forEach((p) => {
+                p.innerHTML = p.innerHTML + "\n\n";
+              });
+
               dom.querySelectorAll("br").forEach((br) => {
-                br.outerHTML = "<div>\n</div>";
+                br.outerHTML = "<div>\n\n</div>";
               });
 
               dom.querySelectorAll("img").forEach((img) => {
@@ -106,7 +111,7 @@ const ImageUploadTextArea: React.FC<ImageUploadTextAreaProps> = ({
               });
 
               let text = dom.getElementsByTagName("body")[0].innerText;
-
+              console.log(dom.getElementsByTagName("body")[0]);
               setIsUploading(true);
               for (let i = 0; i < images.length; i++) {
                 // 1. 이미지 URL에서 이미지 데이터 가져오기
@@ -152,7 +157,7 @@ const ImageUploadTextArea: React.FC<ImageUploadTextAreaProps> = ({
       style={{ height: "400px", marginBottom: "16px" }}
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      onPaste={handlePaste}
+      onPaste={beautifyPaste ? handlePaste : undefined}
       placeholder={placeholder}
       rows={rows}
       disabled={isUploading}

@@ -1,26 +1,27 @@
 import React from "react";
 import { Form, Input, Checkbox, Radio, Col, Row, Select } from "antd";
-import { Config } from "../types";
+import { Config, IMAGE_UPLOAD_HOST } from "../types";
 
 interface ConfigurationProps {
-  removeAsterisk: boolean;
-  preview: boolean;
-  botName: string;
-  personaName: string;
-  selectedMode: "bot" | "persona";
-  changeMode: boolean;
+  config: Config;
   onConfigChange: (key: keyof Config, value: string | boolean) => void;
 }
 
 const Configuration: React.FC<ConfigurationProps> = ({
-  removeAsterisk,
-  botName,
-  personaName,
-  selectedMode,
-  preview,
-  changeMode,
+  config,
   onConfigChange,
 }) => {
+  const {
+    removeAsterisk,
+    preview,
+    botName,
+    personaName,
+    selectedMode,
+    changeMode,
+    imageUpload,
+    imageUploadHost,
+    beautifyPaste,
+  } = config;
   return (
     <Form layout="vertical">
       <Row gutter={[16, 16]} align="middle">
@@ -36,27 +37,40 @@ const Configuration: React.FC<ConfigurationProps> = ({
               애스터리스크(*) 제거
             </Checkbox>
             <Checkbox
+              checked={beautifyPaste}
+              onChange={(e) =>
+                onConfigChange("beautifyPaste", e.target.checked)
+              }
+            >
+              붙여넣기한 텍스트 자동 수정
+            </Checkbox>
+            <div>
+              <Checkbox
+                checked={imageUpload}
+                onChange={(e) =>
+                  onConfigChange("imageUpload", e.target.checked)
+                }
+              >
+                이미지 자동 업로드
+              </Checkbox>
+              <Select
+                defaultValue={IMAGE_UPLOAD_HOST.IBB}
+                style={{ width: 120 }}
+                value={imageUploadHost}
+                onChange={(value) => onConfigChange("imageUploadHost", value)}
+                disabled={!imageUpload}
+                options={[
+                  { value: IMAGE_UPLOAD_HOST.IBB, label: "ImgBB" },
+                  { value: IMAGE_UPLOAD_HOST.ARCA, label: "Arcalive" },
+                ]}
+              />
+            </div>
+            <Checkbox
               checked={preview}
               onChange={(e) => onConfigChange("preview", e.target.checked)}
             >
               변환 결과 렌더링
             </Checkbox>
-            <div>
-              <Checkbox
-                checked={preview}
-                onChange={(e) => onConfigChange("preview", e.target.checked)}
-              >
-                이미지 자동 업로드
-              </Checkbox>
-              <Select
-                defaultValue="ibb"
-                style={{ width: 120 }}
-                options={[
-                  { value: "ibb", label: "ImgBB" },
-                  { value: "arca", label: "Arcalive" },
-                ]}
-              />
-            </div>
           </Form.Item>
         </Col>
 
