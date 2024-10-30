@@ -8,6 +8,7 @@ import {
   createConfigValue,
   createDefaultValue,
   decompressData,
+  initializer,
   loadStateFromStorage,
   updateStateInStorage,
 } from "./utils/storage";
@@ -32,7 +33,12 @@ const Main = () => {
     const savedState = loadStateFromStorage();
     if (savedState) {
       if (savedState.logCustom) {
-        setLogCustom(savedState.logCustom);
+        setLogCustom(
+          initializer(
+            savedState.logCustom as unknown as Record<string, unknown>,
+            createDefaultValue() as unknown as Record<string, unknown>
+          ) as unknown as LogCustom
+        );
       }
       if (savedState.config) {
         setConfig(savedState.config);

@@ -2,7 +2,7 @@ import { Card, Row, Col } from "antd";
 import React from "react";
 import BoxCustomizer from "./BoxCustomizer";
 import TextStylePicker from "./TextStylePicker";
-import { Custom } from "../types";
+import { Custom, IMAGE_UPLOAD_HOST } from "../types";
 import { convertToHTML } from "../utils/textConverter";
 
 interface CustomizerProps {
@@ -31,6 +31,8 @@ const Customizer: React.FC<CustomizerProps> = ({
         personaName: "페르소나 이름",
         selectedMode: title == "캐릭터" ? "bot" : "persona",
         changeMode: false,
+        imageUpload: false,
+        imageUploadHost: IMAGE_UPLOAD_HOST.IBB,
       },
       custom
     );

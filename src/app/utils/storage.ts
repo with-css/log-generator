@@ -157,25 +157,30 @@ export const clearStorage = (): void => {
   }
 };
 
-export const initializer = (
-  data: Record<string, unknown>,
-  template: Record<string, unknown>
-): Record<string, unknown> => {
-  return Object.entries(data).reduce((initialized, [key, value]) => {
-    if (
-      value != null &&
-      typeof value === "object" &&
-      Object.keys(value).length != 0 &&
-      !Array.isArray(value)
-    ) {
-      initialized[key] = initializer(
-        value as Record<string, unknown>,
-        initialized[key] as Record<string, unknown>
-      );
-      return initialized;
-    } else {
-      initialized[key] = value;
-      return initialized;
+type Template = {
+  [key: string]: unknown; // any를 사용하여 다양한 타입을 허용
+};
+
+export const initializer = (object: Template, template: Template): Template => {
+  for (const key in template) {
+    // template의 키가 object에 없으면
+    if (!object.hasOwnProperty(key)) {
+      // 해당 키의 값을 object에 추가합니다.
+      object[key] = template[key];
     }
-  }, template);
+
+    // 키의 값이 객체인 경우, 재귀 호출로 중첩된 객체를 처리합니다.
+    if (typeof template[key] === "object" && template[key] !== null) {
+      // object의 해당 키가 없으면 새로운 객체를 할당
+      if (typeof object[key] !== "object" || object[key] === null) {
+        object[key] = {};
+      }
+      initializer(
+        object[key] as unknown as Template,
+        template[key] as unknown as Template
+      );
+    }
+  }
+
+  return object;
 };
