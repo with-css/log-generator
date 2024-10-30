@@ -120,7 +120,7 @@ const ImageUploadTextArea: React.FC<ImageUploadTextAreaProps> = ({
 
                 const result = await uploadImageToArca(imageFile);
                 // const result = { url: "a", status: 200 };
-                console.log(images[i]);
+
                 if (result.status && result.url) {
                   text = text.replace(images[i], result.url);
                 } else {
