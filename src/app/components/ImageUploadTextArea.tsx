@@ -111,7 +111,7 @@ const ImageUploadTextArea: React.FC<ImageUploadTextAreaProps> = ({
               });
 
               let text = dom.getElementsByTagName("body")[0].innerText;
-              console.log(dom.getElementsByTagName("body")[0]);
+
               setIsUploading(true);
               for (let i = 0; i < images.length; i++) {
                 // 1. 이미지 URL에서 이미지 데이터 가져오기
