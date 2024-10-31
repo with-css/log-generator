@@ -56,10 +56,8 @@ jobs:
 
       - name: Generate Environment Variables File for Production
         run: |
-          echo "NEXT_PUBLIC_ARCA_UPLOAD_URL=$NEXT_PUBLIC_ARCA_UPLOAD_URL" >> .env.production
           echo "NEXT_PUBLIC_PROXY_URL=$NEXT_PUBLIC_PROXY_URL" >> .env.production
         env:
-          NEXT_PUBLIC_ARCA_UPLOAD_URL: ${{ secrets.NEXT_PUBLIC_ARCA_UPLOAD_URL }}
           NEXT_PUBLIC_PROXY_URL: ${{ secrets.NEXT_PUBLIC_PROXY_URL }}
 
       - name: Setup Pages
