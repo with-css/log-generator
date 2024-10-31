@@ -1,5 +1,5 @@
 // components/LogEditor.tsx
-import React, { useMemo } from "react";
+import React, { memo, useMemo, useState } from "react";
 import {
   Row,
   Col,
@@ -20,33 +20,51 @@ import QuickSettings from "./QuickSettings";
 import { createBookmarklet } from "../utils/bookmarkelter";
 import { compressData } from "../utils/storage";
 import ImageUploadTextArea from "./ImageUploadTextArea";
+import { convertToHTML } from "../utils/textConverter";
 
 const { TextArea } = Input;
 const { Title } = Typography;
 
+const RenderingHTML = memo(function RenderingHTML({
+  outputText,
+  images,
+}: {
+  outputText: string;
+  images: [string, string][];
+}) {
+  const output = useMemo(() => {
+    let html = outputText;
+    images.forEach(([blob, url]) => {
+      html = html.replaceAll(
+        `src="${url.replace("&", "&amp;")}"`,
+        `src="${blob}"`
+      );
+    });
+    return html;
+  }, [outputText, images]);
+
+  return <div dangerouslySetInnerHTML={{ __html: output }} />;
+});
+
 interface LogEditorProps {
   inputText: string;
-  outputText: string;
   config: Config;
   logCustom: LogCustom;
   overwriteStyle?: () => void;
   handleLogCustomChange: (newCustom: LogCustom) => void;
   onInputChange: (text: string) => void;
   onConfigChange: (key: keyof Config, value: string | boolean) => void;
-  onConvertText: () => void;
   onCopyToClipboard: (text: string) => void;
 }
 
 const LogEditor: React.FC<LogEditorProps> = ({
   inputText,
-  outputText,
   config,
   logCustom,
   overwriteStyle,
   handleLogCustomChange,
   onInputChange,
   onConfigChange,
-  onConvertText,
   onCopyToClipboard,
 }) => {
   const selected: Custom = useMemo(() => {
@@ -54,6 +72,23 @@ const LogEditor: React.FC<LogEditorProps> = ({
       ? logCustom.character
       : logCustom.persona;
   }, [config, logCustom]);
+  const [images, setImages] = useState<[string, string][]>([]);
+  const [outputText, setOutputText] = useState<string>("");
+
+  const convertText = (): void => {
+    try {
+      const result = convertToHTML(inputText, config, logCustom);
+      setOutputText(result);
+      if (config.changeMode) {
+        onConfigChange(
+          "selectedMode",
+          config.selectedMode === "bot" ? "persona" : "bot"
+        );
+      }
+    } catch (error) {
+      console.error("Error during conversion:", error);
+    }
+  };
 
   const setCustomWithQuickSettings = (box: BoxCustom) => {
     const newBox = Object.assign({}, box);
@@ -75,6 +110,7 @@ const LogEditor: React.FC<LogEditorProps> = ({
       });
     }
   };
+
   const items: CollapseProps["items"] = [
     {
       key: "0",
@@ -88,6 +124,9 @@ const LogEditor: React.FC<LogEditorProps> = ({
                 customColors={selected.box.customColors}
                 customTexts={selected.box.customTexts}
                 customImages={selected.box.customImages}
+                images={images}
+                setImages={setImages}
+                config={config}
                 onCustomColorsChange={(newColors) =>
                   setCustomWithQuickSettings({
                     ...selected.box,
@@ -155,6 +194,9 @@ const LogEditor: React.FC<LogEditorProps> = ({
                     character: newCharacterCustom,
                   });
                 }}
+                images={images}
+                setImages={setImages}
+                config={config}
               ></Customizer>
             </Col>
 
@@ -170,6 +212,9 @@ const LogEditor: React.FC<LogEditorProps> = ({
                         persona: newPersonaCustom,
                       });
                     }}
+                    images={images}
+                    setImages={setImages}
+                    config={config}
                   ></Customizer>
                 </Col>
               </>
@@ -192,6 +237,9 @@ const LogEditor: React.FC<LogEditorProps> = ({
             placeholder="여기에 텍스트를 입력하세요..."
             rows={6}
             beautifyPaste={config.beautifyPaste}
+            images={images}
+            setImages={setImages}
+            imageUpload={config.imageUpload}
           />
         </Col>
 
@@ -209,7 +257,10 @@ const LogEditor: React.FC<LogEditorProps> = ({
         <Row gutter={[16, 16]} justify="center" style={{ marginBottom: 24 }}>
           <Col span={24}>
             <Title level={4}>변환 결과 렌더링</Title>
-            <div dangerouslySetInnerHTML={{ __html: outputText }} />
+            <RenderingHTML
+              outputText={outputText}
+              images={images}
+            ></RenderingHTML>
           </Col>
         </Row>
       )}
@@ -224,7 +275,7 @@ const LogEditor: React.FC<LogEditorProps> = ({
       {/* 버튼 패널 */}
       <Row gutter={[16, 16]} justify="center" style={{ marginTop: "24px" }}>
         <Col>
-          <Button type="primary" onClick={onConvertText} size="large">
+          <Button type="primary" onClick={convertText} size="large">
             HTML 변환
           </Button>
         </Col>

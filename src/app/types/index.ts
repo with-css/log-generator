@@ -12,6 +12,7 @@ export interface BoxCustom {
   customHTML: string;
   customPTag: string;
   customImages: string[];
+  customImageTag: string;
   customColors: string[];
   customTexts: string[];
 }

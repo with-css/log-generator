@@ -3,7 +3,6 @@
 import React, { useState, useEffect, Suspense } from "react";
 import { Layout, Typography, message, TabsProps, Tabs } from "antd";
 import { Config, LogCustom } from "./types";
-import { convertToHTML } from "./utils/textConverter";
 import {
   createConfigValue,
   createDefaultValue,
@@ -24,7 +23,6 @@ const Main = () => {
   // State 관리
   const [isClient, setIsClient] = useState(false);
   const [inputText, setInputText] = useState<string>("");
-  const [outputText, setOutputText] = useState<string>("");
 
   const [activeTab, setActiveTab] = useState(loadURL ? "4" : "1");
 
@@ -36,12 +34,21 @@ const Main = () => {
         setLogCustom(
           initializer(
             savedState.logCustom as unknown as Record<string, unknown>,
-            createDefaultValue() as unknown as Record<string, unknown>
+            {
+              character: createDefaultValue(),
+              persona: createDefaultValue(),
+              logCustom: false,
+            } as unknown as Record<string, unknown>
           ) as unknown as LogCustom
         );
       }
       if (savedState.config) {
-        setConfig(savedState.config);
+        setConfig(
+          initializer(
+            savedState.config as unknown as Record<string, unknown>,
+            createConfigValue() as unknown as Record<string, unknown>
+          ) as unknown as Config
+        );
       }
     }
   }, []); // 초기 상태 로드
@@ -49,8 +56,17 @@ const Main = () => {
   useEffect(() => {
     if (loadURL == null) return;
     const sharedState = decompressData(loadURL);
-    if (sharedState && sharedState.logCustom)
-      setSharedLogCustom(sharedState.logCustom);
+    if (sharedState && sharedState.logCustom) {
+      setSharedLogCustom(
+        initializer(
+          sharedState.logCustom as unknown as Record<string, unknown>,
+          {
+            character: createDefaultValue(),
+            persona: createDefaultValue(),
+          } as unknown as Record<string, unknown>
+        ) as unknown as LogCustom
+      );
+    }
   }, [loadURL]);
 
   const [logCustom, setLogCustom] = useState<LogCustom>({
@@ -85,25 +101,6 @@ const Main = () => {
       return newConfig;
     });
   };
-  const convertText = (): void => {
-    try {
-      const result = convertToHTML(
-        inputText,
-        config,
-        activeTab == "1" ? logCustom : sharedLogCustom
-      );
-      setOutputText(result);
-      if (config.changeMode) {
-        handleConfigChange(
-          "selectedMode",
-          config.selectedMode === "bot" ? "persona" : "bot"
-        );
-      }
-    } catch (error) {
-      console.error("Error during conversion:", error);
-      message.error("변환 중 오류가 발생했습니다.");
-    }
-  };
 
   // 클립보드에 복사
   const copyToClipboard = async (text: string): Promise<void> => {
@@ -124,13 +121,11 @@ const Main = () => {
           <Title level={2}>로그 제조기</Title>
           <LogEditor
             inputText={inputText}
-            outputText={outputText}
             config={config}
             logCustom={logCustom}
             handleLogCustomChange={handleLogCustomChange}
             onInputChange={(text) => setInputText(text)}
             onConfigChange={handleConfigChange}
-            onConvertText={convertText}
             onCopyToClipboard={copyToClipboard}
           />
         </>
@@ -144,7 +139,6 @@ const Main = () => {
           <Title level={2}>공유 받은 스타일</Title>
           <LogEditor
             inputText={inputText}
-            outputText={outputText}
             config={config}
             logCustom={sharedLogCustom}
             handleLogCustomChange={(newLogCustom) =>
@@ -152,7 +146,6 @@ const Main = () => {
             }
             onInputChange={(text) => setInputText(text)}
             onConfigChange={handleConfigChange}
-            onConvertText={convertText}
             onCopyToClipboard={copyToClipboard}
             overwriteStyle={() => handleLogCustomChange(sharedLogCustom)}
           />

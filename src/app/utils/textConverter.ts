@@ -107,7 +107,10 @@ export const processText = (
   let currentLines: string[] = [];
 
   text.split("\n").forEach((line) => {
-    if (line.trim()) {
+    const image = line.match(/^\{\{img::(.*?)\}\}$/);
+    if (image) {
+      paragraphs.push(line);
+    } else if (line.trim()) {
       const styledLine = styleConversationInParagraph(line, custom.text);
       currentLines.push(parseStyledText(styledLine, custom.text));
     } else if (currentLines.length > 0) {
@@ -122,7 +125,7 @@ export const processText = (
   });
 
   if (currentLines.length > 0) {
-    const paragraph = currentLines.join("<br/>");
+    const paragraph = currentLines.join();
     paragraphs.push(
       custom.box.isCustomMode
         ? custom.box.customPTag.replaceAll("{{line}}", paragraph)
@@ -130,11 +133,20 @@ export const processText = (
     );
   }
 
+  let convertImageText = paragraphs.join("\n");
+
+  convertImageText.matchAll(/\{\{img::(.*?)\}\}/g).forEach((result) => {
+    convertImageText = convertImageText.replace(
+      result[0],
+      custom.box.customImageTag.replace("{{img}}", result[1])
+    );
+  });
+
   if (config.removeAsterisk) {
-    return removeAsterisk(paragraphs.join("\n"));
+    return removeAsterisk(convertImageText);
   }
 
-  return paragraphs.join("\n");
+  return convertImageText;
 };
 
 export const convertToHTML = (

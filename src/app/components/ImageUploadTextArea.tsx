@@ -13,6 +13,8 @@ interface ImageUploadTextAreaProps {
   beautifyPaste?: boolean;
   imageUpload?: boolean;
   imageUploadHost?: IMAGE_UPLOAD_HOST;
+  images?: [string, string][];
+  setImages?: (newImages: [string, string][]) => void;
 }
 
 type TextAreaRefType = GetRef<typeof TextArea>;
@@ -26,6 +28,8 @@ const ImageUploadTextArea: React.FC<ImageUploadTextAreaProps> = ({
   imageUpload = false,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   imageUploadHost = IMAGE_UPLOAD_HOST.IBB,
+  images = [],
+  setImages = () => {},
 }) => {
   // 업로드 중인 상태 관리
   const [isUploading, setIsUploading] = useState(false);
@@ -62,6 +66,11 @@ const ImageUploadTextArea: React.FC<ImageUploadTextAreaProps> = ({
             if (result.status && result.url) {
               // 이미지 CBS 문법 생성
               const imageMarkdown = `{{img::${result.url}}}`;
+              await setImages(
+                images
+                  .slice()
+                  .concat([[URL.createObjectURL(imageFile), result.url]])
+              );
 
               // 현재 커서 위치에 이미지 마크다운 삽입
               const newValue =
@@ -70,6 +79,7 @@ const ImageUploadTextArea: React.FC<ImageUploadTextAreaProps> = ({
                 value.slice(selectionEnd);
 
               onChange(newValue);
+              setIsUploading(false);
             } else {
               setIsUploading(false);
               throw new Error(result.error || "업로드 실패");
@@ -84,9 +94,10 @@ const ImageUploadTextArea: React.FC<ImageUploadTextAreaProps> = ({
               e.preventDefault(); // 기본 붙여넣기 동작 방지
               const mimeType = "text/html";
               const domParser = new DOMParser();
-              const images: string[] = [];
+              const htmlImages: string[] = [];
 
               const dom = domParser.parseFromString(s, mimeType);
+
               dom.querySelectorAll("em").forEach((em) => {
                 em.innerText = `*${em.innerText}*`;
               });
@@ -111,19 +122,34 @@ const ImageUploadTextArea: React.FC<ImageUploadTextAreaProps> = ({
                 const risuImg = img.src.match(
                   /https:\/\/sv\.risuai\.xyz\/rs\/assets\/[a-f0-9]+\.\w+/
                 );
-
                 if (risuImg) {
-                  images.push(risuImg[0]);
+                  htmlImages.push(risuImg[0]);
                   img.outerHTML = `<div>{{img::${risuImg[0]}}}</div>`;
                 }
               });
+              dom
+                .querySelectorAll(
+                  `div[style*='background-image: url("https://sv.risuai.xyz']`
+                )
+                .forEach((div) => {
+                  const risuImg = div
+                    .getAttribute("style")!
+                    .match(
+                      /url\("(https:\/\/sv\.risuai\.xyz\/rs\/assets\/[a-f0-9]+\.\w+)"\)/
+                    );
+
+                  if (risuImg) {
+                    htmlImages.push(risuImg[1]);
+                    div.outerHTML = `<div>{{img::${risuImg[1]}}}</div>\n\n`;
+                  }
+                });
 
               let text = dom.getElementsByTagName("body")[0].innerText;
               if (imageUpload) {
                 setIsUploading(true);
-                for (let i = 0; i < images.length; i++) {
+                for (let i = 0; i < htmlImages.length; i++) {
                   // 1. 이미지 URL에서 이미지 데이터 가져오기
-                  const imageResponse = await fetch(images[i]);
+                  const imageResponse = await fetch(htmlImages[i]);
                   const imageBlob = await imageResponse.blob();
 
                   // 2. 이미지 파일 생성
@@ -135,10 +161,15 @@ const ImageUploadTextArea: React.FC<ImageUploadTextAreaProps> = ({
                   // const result = { url: "a", status: 200 };
 
                   if (result.status && result.url) {
-                    text = text.replace(images[i], result.url);
+                    await setImages(
+                      images
+                        .slice()
+                        .concat([[URL.createObjectURL(imageFile), result.url]])
+                    );
+                    text = text.replace(htmlImages[i], result.url);
                   } else {
                     setIsUploading(false);
-                    throw new Error(result.error || "업로드 실패");
+                    throw new Error("업로드 실패");
                   }
                 }
               }
@@ -157,7 +188,7 @@ const ImageUploadTextArea: React.FC<ImageUploadTextAreaProps> = ({
         console.error("Upload error:", error);
       }
     },
-    [textarea, imageUpload, value, onChange]
+    [textarea, imageUpload, setImages, images, value, onChange]
   );
 
   return (

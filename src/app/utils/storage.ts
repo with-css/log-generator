@@ -33,6 +33,7 @@ export const createDefaultValue = (): Custom => ({
     customImages: [],
     customColors: [],
     customTexts: [],
+    customImageTag: '<img src="{{img}}" />',
   },
   text: {
     normal: {

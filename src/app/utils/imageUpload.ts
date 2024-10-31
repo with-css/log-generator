@@ -25,9 +25,8 @@ export const uploadImageToArca = async (
     const formData = new FormData();
     formData.append("upload", file);
     formData.append("token", generateRandomString(16));
-    formData.append("saveExif", "true");
+    formData.append("saveExif", "false");
     formData.append("saveFilename", "false");
-
     // fetch 요청
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_PROXY_URL}/upload`,

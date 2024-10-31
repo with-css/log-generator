@@ -13,7 +13,7 @@ import {
 } from "antd";
 import { ChromePicker } from "react-color";
 import Editor from "@monaco-editor/react";
-import { BoxCustom } from "../types";
+import { BoxCustom, Config } from "../types";
 import QuickSettings from "./QuickSettings";
 
 const { Title } = Typography;
@@ -21,11 +21,17 @@ const { Title } = Typography;
 interface BoxCustomizerProps {
   boxCustom: BoxCustom;
   setBoxCustom: (newBoxCustom: BoxCustom) => void;
+  images?: [string, string][];
+  setImages?: (newImages: [string, string][]) => void;
+  config: Config;
 }
 
 const BoxCustomizer: React.FC<BoxCustomizerProps> = ({
   boxCustom,
   setBoxCustom,
+  config,
+  images = [],
+  setImages = () => {},
 }) => {
   const [showColorPicker, setShowColorPicker] = useState(false);
   const [showShadowColorPicker, setShowShadowColorPicker] = useState(false);
@@ -40,6 +46,7 @@ const BoxCustomizer: React.FC<BoxCustomizerProps> = ({
     customImages,
     customColors,
     customTexts,
+    customImageTag,
   } = boxCustom;
   // CSS Custom 모드가 켜질 때 현재 스타일을 기반으로 초기 CSS 생성
   useEffect(() => {
@@ -90,7 +97,7 @@ background-color: {{color::박스 배경 색깔}};
   };
 
   const controlLabelStyle: React.CSSProperties = {
-    width: "100px",
+    width: "120px",
     display: "inline-block",
     marginRight: "8px",
   };
@@ -166,9 +173,12 @@ background-color: {{color::박스 배경 색깔}};
                 onCustomImagesChange={(newImages) =>
                   setBoxCustom({ ...boxCustom, customImages: newImages })
                 }
+                images={images}
+                setImages={setImages}
+                config={config}
               />
 
-              <div>
+              <div style={{ marginBottom: 24 }}>
                 <span style={controlLabelStyle}>Custom P Tag</span>
                 <Input
                   value={customPTag}
@@ -188,6 +198,29 @@ background-color: {{color::박스 배경 색깔}};
                     않습니다. 본문 출력을 위해선
                     &apos;&#123;&#123;line&#125;&#125;&apos;을 포함시켜야
                     합니다.
+                  </Typography.Text>
+                )}
+              </div>
+
+              <div>
+                <span style={controlLabelStyle}>Custom Img Tag</span>
+                <Input
+                  value={customImageTag}
+                  status={
+                    customImageTag.includes("{{img}}") ? undefined : "warning"
+                  }
+                  onChange={(e) =>
+                    setBoxCustom({
+                      ...boxCustom,
+                      customImageTag: e.target.value,
+                    })
+                  }
+                />
+                {!customImageTag.includes("{{img") && (
+                  <Typography.Text type="warning">
+                    &apos;&#123;&#123;img&#125;&#125;&apos;이 포함되어 있지
+                    않습니다. 본문 출력을 위해선
+                    &apos;&#123;&#123;img&#125;&#125;&apos;을 포함시켜야 합니다.
                   </Typography.Text>
                 )}
               </div>

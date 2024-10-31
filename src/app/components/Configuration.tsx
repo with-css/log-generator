@@ -59,10 +59,7 @@ const Configuration: React.FC<ConfigurationProps> = ({
                 value={imageUploadHost}
                 onChange={(value) => onConfigChange("imageUploadHost", value)}
                 disabled={!imageUpload}
-                options={[
-                  { value: IMAGE_UPLOAD_HOST.IBB, label: "ImgBB" },
-                  { value: IMAGE_UPLOAD_HOST.ARCA, label: "Arcalive" },
-                ]}
+                options={[{ value: IMAGE_UPLOAD_HOST.ARCA, label: "Arcalive" }]}
               />
             </div>
             <Checkbox
