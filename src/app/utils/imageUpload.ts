@@ -1,5 +1,3 @@
-import { message } from "antd";
-
 const generateRandomString = (length: number) => {
   const characters = "0123456789abcde";
   let result = "";
@@ -29,7 +27,8 @@ export const uploadImageToArca = async (
     formData.append("saveFilename", "false");
     // fetch 요청
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_PROXY_URL}/upload`,
+      // `${process.env.NEXT_PUBLIC_PROXY_URL}/upload`,
+      `/upload`,
       {
         method: "POST",
         headers: {
@@ -54,7 +53,6 @@ export const uploadImageToArca = async (
       url: data.url, // API 응답에 따라 적절한 필드명으로 수정 필요
     };
   } catch (error) {
-    message.error("이미지 업로드에 실패했습니다.");
     console.error("Upload error:", error);
 
     return {
