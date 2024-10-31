@@ -77,7 +77,7 @@ export const createConfigValue = (): Config => ({
   selectedMode: "bot",
   changeMode: false,
   imageUpload: true,
-  imageUploadHost: IMAGE_UPLOAD_HOST.IBB,
+  imageUploadHost: IMAGE_UPLOAD_HOST.ARCA,
   beautifyPaste: true,
 });
 

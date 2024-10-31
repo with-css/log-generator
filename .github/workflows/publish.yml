@@ -53,6 +53,15 @@ jobs:
         with:
           node-version: "20"
           cache: ${{ steps.detect-package-manager.outputs.manager }}
+
+      - name: Generate Environment Variables File for Production
+        run: |
+          echo "NEXT_PUBLIC_ARCA_UPLOAD_URL=$NEXT_PUBLIC_ARCA_UPLOAD_URL" >> .env.production
+          echo "NEXT_PUBLIC_PROXY_URL=$NEXT_PUBLIC_PROXY_URL" >> .env.production
+        env:
+          NEXT_PUBLIC_ARCA_UPLOAD_URL: ${{ secrets.NEXT_PUBLIC_ARCA_UPLOAD_URL }}
+          NEXT_PUBLIC_PROXY_URL: ${{ secrets.NEXT_PUBLIC_PROXY_URL }}
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
         with:
