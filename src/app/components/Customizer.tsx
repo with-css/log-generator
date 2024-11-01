@@ -49,10 +49,16 @@ const Customizer: React.FC<CustomizerProps> = ({
     let text = customHTML;
 
     images.forEach(([blob, url]) => {
-      text = text.replaceAll(
-        `src="${url.replace("&", "&amp;")}"`,
-        `src="${blob}"`
+      const re = new RegExp(
+        `url\\\(["']?${url
+          .replace("&", "&amp;")
+          .replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}["']?\\\)`,
+        "g"
       );
+      console.log(re, text);
+      text = text
+        .replaceAll(`src="${url.replace("&", "&amp;")}"`, `src="${blob}"`)
+        .replaceAll(re, `url(${blob})`);
     });
 
     return <div dangerouslySetInnerHTML={{ __html: text }} />;
