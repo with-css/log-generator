@@ -12,7 +12,7 @@ const STORAGE_KEY = "app_state";
 
 // 기본 스토리지 옵션
 const defaultOptions: StorageOptions = {
-  expires: 30, // 30일
+  expires: 400, // 30일
   path: "/",
 };
 
