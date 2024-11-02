@@ -176,7 +176,7 @@ export const createBookmarklet = (
       document.body.removeChild(textarea);
     };
 
-   const chatToolbars = document.querySelectorAll(".chat > div.flex");
+   const chatToolbars = document.querySelectorAll(".chat-width > div.flex");
     
     if (chatToolbars.length > 0) {
       chatToolbars.forEach(toolbar => {
@@ -191,7 +191,7 @@ export const createBookmarklet = (
         
         personaCopyButton.onclick = async (e) => {
           const chattext = e.target.closest(".risu-chat").querySelector(".chattext");
-          const name = e.target.closest(".chat").querySelector(".chat");
+          const name = e.target.closest(".chat-width").querySelector(".chat-width");
           if (!chattext) return;
           const processedHtml = await processText(chattext.innerText, false, name.innerText);
           copyToClipboard(processedHtml);
@@ -206,7 +206,7 @@ export const createBookmarklet = (
         
         botCopyButton.onclick = async (e) => {
           const chattext = e.target.closest(".risu-chat").querySelector(".chattext");
-          const name = e.target.closest(".chat").querySelector(".chat");
+          const name = e.target.closest(".chat-width").querySelector(".chat-width");
           if (!chattext) return;
           const processedHtml = await processText(chattext.innerText, true, name.innerText);
           copyToClipboard(processedHtml);
