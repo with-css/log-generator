@@ -1,5 +1,13 @@
 import { Custom, LogCustom, Config, TextCustom } from "../types";
 import DOMPurify from "dompurify";
+import markdownit from "markdown-it";
+
+const md = markdownit({
+  html: true,
+  breaks: true,
+  linkify: false,
+  typographer: true,
+});
 
 export const removeAsterisk = (text: string): string => {
   return text.replace(/\*+/g, "");
@@ -58,6 +66,7 @@ export const styleConversationInParagraph = (
 };
 
 function parseStyledText(input: string, textCustom: TextCustom): string {
+  input = md.render(input);
   input = input.replace(
     /['‘](.*?)['’]/g,
     `<span style='${
