@@ -8,6 +8,7 @@ const md = markdownit({
   linkify: false,
   typographer: true,
 });
+md.inline.ruler.disable(["emphasis", "strikethrough"]);
 
 export const removeAsterisk = (text: string): string => {
   return text.replace(/\*+/g, "");
@@ -67,6 +68,7 @@ export const styleConversationInParagraph = (
 
 function parseStyledText(input: string, textCustom: TextCustom): string {
   input = md.render(input);
+  console.log(input);
   input = input.replace(
     /['‘](.*?)['’]/g,
     `<span style='${
