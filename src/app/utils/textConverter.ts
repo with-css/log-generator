@@ -104,6 +104,8 @@ function parseStyledText(input: string, textCustom: TextCustom): string {
     }'>$1</span>`
   );
 
+  input = input.replaceAll(/‘|’/g, "'");
+
   return input;
 }
 
